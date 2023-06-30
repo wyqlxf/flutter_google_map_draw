@@ -174,24 +174,6 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
     setState(() {
       isPanEnd = false;
       latLngList.clear();
-    });
-  }
-
-  /// 手势监听拖动进行中
-  onPanUpdate(DragUpdateDetails details) async {
-    if (isPanEnd) {
-      return;
-    }
-    final pixelRatio = MediaQuery.of(context).devicePixelRatio;
-    Offset offset = details.localPosition;
-    GoogleMapController controller = await mapController.future;
-    // ScreenCoordinate 要求 (x,y) 参数是实际像素的数量，所以需要将devicePixelRatio考虑在内
-    LatLng latLng = await controller.getLatLng(ScreenCoordinate(
-        x: (offset.dx * pixelRatio).round(),
-        y: (offset.dy * pixelRatio).round()));
-    setState(() {
-      latLngList.add(latLng);
-
       polyLines.clear();
       polyLines.add(Polyline(
         polylineId: const PolylineId('polylineId'),
@@ -213,6 +195,23 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
         consumeTapEvents: true,
         fillColor: Colors.blue.withOpacity(0.5),
       ));
+    });
+  }
+
+  /// 手势监听拖动进行中
+  onPanUpdate(DragUpdateDetails details) async {
+    if (isPanEnd) {
+      return;
+    }
+    final pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    Offset offset = details.localPosition;
+    GoogleMapController controller = await mapController.future;
+    // ScreenCoordinate 要求 (x,y) 参数是实际像素的数量，所以需要将devicePixelRatio考虑在内
+    LatLng latLng = await controller.getLatLng(ScreenCoordinate(
+        x: (offset.dx * pixelRatio).round(),
+        y: (offset.dy * pixelRatio).round()));
+    setState(() {
+      latLngList.add(latLng);
     });
   }
 
